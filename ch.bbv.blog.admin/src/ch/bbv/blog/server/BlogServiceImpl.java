@@ -6,7 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
+
 import ch.bbv.blog.client.BlogService;
+import ch.bbv.blog.service.BlogAdminService;
+import ch.bbv.blog.service.model.BlogEntry;
+import ch.bbv.blog.service.model.BlogTask;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -15,6 +20,9 @@ public class BlogServiceImpl extends RemoteServiceServlet implements BlogService
 
     private final Map<String, List<String>> userToEntries = new HashMap<String, List<String>>();
 
+    @EJB
+    private BlogAdminService blogAdminService;
+    
     @Override
     public String post(String username, String blogValue) {
         List<String> entriesOfUser = userToEntries.get(username);

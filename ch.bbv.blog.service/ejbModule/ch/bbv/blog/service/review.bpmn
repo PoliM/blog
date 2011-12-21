@@ -12,13 +12,13 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <itemDefinition id="_blogIdItem" structureRef="Long" />
+  <itemDefinition id="_blogIdItem" structureRef="java.util.UUID" />
   <itemDefinition id="_rejectedItem" structureRef="Boolean" />
 
-  <process processType="Private" isExecutable="true" id="ch.bbv.blog.review" name="Blog review workflow" tns:packageName="ch.bbv.blog" tns:version="1" >
+  <process processType="Private" isExecutable="true" id="ch.bbv.blog.review" name="Blog review workflow" tns:packageName="ch.bbv.blog.service" tns:version="1" >
 
     <extensionElements>
-     <tns:import name="ch.bbv.blog.WorkflowServiceFactory" />
+     <tns:import name="ch.bbv.blog.service.wf.WorkflowServiceFactory" />
     </extensionElements>
     <!-- process variables -->
     <property id="blogId" itemSubjectRef="_blogIdItem"/>

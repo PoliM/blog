@@ -15,10 +15,10 @@ import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.WorkItemHandler;
+import org.jbpm.workflow.instance.WorkflowProcessInstance;
 
 import ch.bbv.blog.service.model.BlogEntry;
 import ch.bbv.blog.service.model.BlogTask;
-import ch.bbv.blog.service.model.User;
 import ch.bbv.blog.service.wf.BlogTaskWorkItemHandler;
 
 /**
@@ -27,7 +27,6 @@ import ch.bbv.blog.service.wf.BlogTaskWorkItemHandler;
 @Stateless(mappedName = "BlogAdminService")
 public class BlogAdminServiceImpl implements BlogAdminService {
 
-	private static Set<User> users = new HashSet<User>();
 	private static Map<UUID, BlogEntry> blogEntries = new HashMap<UUID, BlogEntry>();
 	private static Map<UUID, BlogTask> blogTasks = new HashMap<UUID, BlogTask>();
 
@@ -39,32 +38,29 @@ public class BlogAdminServiceImpl implements BlogAdminService {
 		blogEntries.get(id).setState(BlogEntry.State.Rejected);
 	}
 
+	public static void createBlogTask(long workItemId, UUID blogEntryId) {
+		BlogTask blogTask = new BlogTask(workItemId, blogEntryId);
+		blogTasks.put(blogTask.getId(), blogTask);
+	}
+
+	private StatefulKnowledgeSession ksession;
+
 	/**
 	 * Default constructor.
 	 */
 	public BlogAdminServiceImpl() {
-		users.add(new User("Marco"));
-		users.add(new User("Lukas"));
-		users.add(new User("Adrian"));
 	}
 
 	@Override
 	public void create(BlogEntry blogEntry) {
 		blogEntries.put(blogEntry.getId(), blogEntry);
-		
+
 		// Start workflow
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("blogId", blogEntry.getId());
-		
-		System.out.println("Loading process... ");
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newClassPathResource("review.bpmn"), ResourceType.BPMN2);
-		KnowledgeBase knowledgeBase = kbuilder.newKnowledgeBase();
-		StatefulKnowledgeSession ksession = knowledgeBase.newStatefulKnowledgeSession();
 
-		WorkItemHandler workItemHandler = new BlogTaskWorkItemHandler();
-		ksession.getWorkItemManager().registerWorkItemHandler("Human Task", workItemHandler);
-
+		WorkflowProcessInstance w = (WorkflowProcessInstance) getKSession()
+				.startProcess("ch.bbv.blog.review", params);
 	}
 
 	@Override
@@ -96,12 +92,36 @@ public class BlogAdminServiceImpl implements BlogAdminService {
 
 	@Override
 	public void reviewedOk(UUID blogTaskId) {
-
+		BlogTask blogTask = blogTasks.get(blogTaskId);
+		Map<String, Object> taskResult = new HashMap<String, Object>();
+		taskResult.put("rejected", Boolean.FALSE);
+		ksession.getWorkItemManager().completeWorkItem(
+				blogTask.getWorkItemId(), taskResult);
 	}
 
 	@Override
 	public void reviewedFailed(UUID blogTaskId) {
-
+		BlogTask blogTask = blogTasks.get(blogTaskId);
+		Map<String, Object> taskResult = new HashMap<String, Object>();
+		taskResult.put("rejected", Boolean.TRUE);
+		ksession.getWorkItemManager().completeWorkItem(
+				blogTask.getWorkItemId(), taskResult);
 	}
 
+	private StatefulKnowledgeSession getKSession() {
+		if (ksession == null) {
+			System.out.println("Loading process... ");
+			KnowledgeBuilder kbuilder = KnowledgeBuilderFactory
+					.newKnowledgeBuilder();
+			kbuilder.add(ResourceFactory.newClassPathResource("ch/bbv/blog/service/review.bpmn"),
+					ResourceType.BPMN2);
+			KnowledgeBase knowledgeBase = kbuilder.newKnowledgeBase();
+			ksession = knowledgeBase.newStatefulKnowledgeSession();
+
+			WorkItemHandler workItemHandler = new BlogTaskWorkItemHandler();
+			ksession.getWorkItemManager().registerWorkItemHandler("Human Task",
+					workItemHandler);
+		}
+		return ksession;
+	}
 }

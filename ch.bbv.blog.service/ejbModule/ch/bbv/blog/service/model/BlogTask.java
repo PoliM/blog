@@ -12,19 +12,30 @@ public class BlogTask {
 
 	private UUID id;
 
+	private long workItemId;
+	
 	private UUID blogEntryId;
 
-	public BlogTask(UUID blogEntryId) {
+	public BlogTask(long workItemId, UUID blogEntryId) {
 		id = UUID.randomUUID();
+		this.workItemId = workItemId;
 		this.blogEntryId = blogEntryId;
 		state = State.Open;
 	}
 
+	public long getWorkItemId() {
+		return workItemId;
+	}
+	
 	public State getState() {
 		return state;
 	}
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public UUID getId() {
+		return id;
 	}
 }

@@ -16,13 +16,13 @@ public class BlogEntry implements Serializable {
 
 	private UUID id;
 	
-	private User author;
+	private String author;
 
 	private String text;
 
 	private State state;
 
-	public BlogEntry(User author, String text) {
+	public BlogEntry(String author, String text) {
 		this.author = author;
 		this.text = text;
 		this.state = State.Draft;
@@ -33,7 +33,7 @@ public class BlogEntry implements Serializable {
 		return id;
 	}
 
-	public User getAuthor() {
+	public String getAuthor() {
 		return author;
 	}
 
