@@ -16,4 +16,6 @@ public interface BlogServiceAsync {
 
     void deny(String value, String text, String text2, AsyncCallback<Boolean> asyncCallback);
 
+    void getAllEntries(AsyncCallback<Collection<String>> asyncCallback);
+
 }
