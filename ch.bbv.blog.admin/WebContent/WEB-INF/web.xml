@@ -342,7 +342,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>blogServlet</servlet-name>
-		<url-pattern>/gwttests/blog</url-pattern>
+		<url-pattern>/gwt_jboss/blog</url-pattern>
 	</servlet-mapping>
 
 </web-app>
