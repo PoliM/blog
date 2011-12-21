@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='ch.bbv.blog.admin.AdminClient' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/AdminClient/greet" class="ch.bbv.blog.admin.server.GreetingServiceImpl" />
+
+</module>
