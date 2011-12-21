@@ -1,0 +1,9 @@
+#Wed Dec 21 14:28:40 CET 2011
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.jboss.tools.seam.internal.core.validation.SeamProjectPropertyValidator;org.jboss.tools.common.verification.vrules.core.resources.CommonValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.jboss.tools.common.validation.ValidatorManager;
+USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.jboss.tools.seam.internal.core.validation.SeamProjectPropertyValidator;org.jboss.tools.common.verification.vrules.core.resources.CommonValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.jboss.tools.common.validation.ValidatorManager;
+USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationtrueversion1.2.302.v201107140600
+eclipse.preferences.version=1
+override=true
+suspend=true
+vf.version=3

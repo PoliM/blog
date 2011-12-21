@@ -2,15 +2,12 @@ package ch.bbv.blog.client;
 
 import java.util.Collection;
 
-import ch.bbv.blog.shared.FieldVerifier;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -38,11 +35,6 @@ public class GwtTests implements EntryPoint {
     private static final String SERVER_ERROR = "An error occurred while "
             + "attempting to contact the server. Please check your network " + "connection and try again.";
 
-    /**
-     * Create a remote service proxy to talk to the server-side Greeting
-     * service.
-     */
-    private final GreetingServiceAsync greetingService = GWT.create(GreetingService.class);
     private final BlogServiceAsync blogService = GWT.create(BlogService.class);
 
     /**
@@ -71,34 +63,28 @@ public class GwtTests implements EntryPoint {
 
         final ListBox listBox = new ListBox();
         final TextArea reviewTextFiled = new TextArea();
-        final Button sendButton = new Button("Send");
-        final TextBox nameField = new TextBox();
-        nameField.setText("GWT User");
         final Label errorLabel = new Label();
-
-        // We can add style names to widgets
-        sendButton.addStyleName("sendButton");
 
         // Add the nameField and sendButton to the RootPanel
         // Use RootPanel.get() to get the entire body element
         RootPanel rootPanel = RootPanel.get("nameFieldContainer");
 
-        TabPanel tabPanel = new TabPanel();
+        final TabPanel tabPanel = new TabPanel();
         rootPanel.add(tabPanel, 92, 219);
         tabPanel.setSize("573px", "231px");
 
-        Grid grid = new Grid(3, 2);
+        final Grid grid = new Grid(3, 2);
         tabPanel.add(grid, "New Entry", false);
         grid.setSize("5cm", "3cm");
 
-        Label lblUser = new Label("User");
+        final Label lblUser = new Label("User");
         grid.setWidget(0, 0, lblUser);
 
         final TextBox usernameTextBox = new TextBox();
         usernameTextBox.setName("userName");
         grid.setWidget(0, 1, usernameTextBox);
 
-        Label lblEntry = new Label("Entry");
+        final Label lblEntry = new Label("Entry");
         grid.setWidget(1, 0, lblEntry);
 
         final TextArea newEntryTextBox = new TextArea();
@@ -107,13 +93,13 @@ public class GwtTests implements EntryPoint {
         grid.setWidget(1, 1, newEntryTextBox);
         newEntryTextBox.setSize("497px", "121px");
 
-        Button btnCancel = new Button("Cancel");
+        final Button btnCancel = new Button("Cancel");
         grid.setWidget(2, 0, btnCancel);
 
-        Button btnSubmit = new Button("Submit");
+        final Button btnSubmit = new Button("Submit");
         grid.setWidget(2, 1, btnSubmit);
 
-        SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
+        final SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
         tabPanel.add(splitLayoutPanel, "Review", false);
         splitLayoutPanel.setSize("560px", "170px");
 
@@ -242,13 +228,9 @@ public class GwtTests implements EntryPoint {
                         });
             }
         });
-        rootPanel.add(nameField);
-        RootPanel.get("sendButtonContainer").add(sendButton);
-        RootPanel.get("errorLabelContainer").add(errorLabel);
 
-        // Focus the cursor on the name field when the app loads
-        nameField.setFocus(true);
-        nameField.selectAll();
+        RootPanel.get("tabs").add(tabPanel);
+        RootPanel.get("errorLabelContainer").add(errorLabel);
 
         class SendPostHandler implements ClickHandler, KeyUpHandler {
 
@@ -300,81 +282,14 @@ public class GwtTests implements EntryPoint {
 
         }
 
-        // Create a handler for the sendButton and nameField
-        class MyHandler implements ClickHandler, KeyUpHandler {
-            /**
-             * Fired when the user clicks on the sendButton.
-             */
-            @Override
-            public void onClick(ClickEvent event) {
-                sendNameToServer();
-            }
-
-            /**
-             * Fired when the user types in the nameField.
-             */
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    sendNameToServer();
-                }
-            }
-
-            /**
-             * Send the name from the nameField to the server and wait for a
-             * response.
-             */
-            private void sendNameToServer() {
-                // First, we validate the input.
-                errorLabel.setText("");
-                String textToServer = nameField.getText();
-                if (!FieldVerifier.isValidName(textToServer)) {
-                    errorLabel.setText("Please enter at least four characters");
-                    return;
-                }
-
-                // Then, we send the input to the server.
-                sendButton.setEnabled(false);
-                textToServerLabel.setText(textToServer);
-                serverResponseLabel.setText("");
-                greetingService.greetServer(textToServer, new AsyncCallback<String>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        // Show the RPC error message to the user
-                        dialogBox.setText("Remote Procedure Call - Failure");
-                        serverResponseLabel.addStyleName("serverResponseLabelError");
-                        serverResponseLabel.setHTML(SERVER_ERROR);
-                        dialogBox.center();
-                        closeButton.setFocus(true);
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        dialogBox.setText("Remote Procedure Call");
-                        serverResponseLabel.removeStyleName("serverResponseLabelError");
-                        serverResponseLabel.setHTML(result);
-                        dialogBox.center();
-                        closeButton.setFocus(true);
-                    }
-                });
-            }
-        }
         // Add a handler to close the DialogBox
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 dialogBox.hide();
-                sendButton.setEnabled(true);
-                sendButton.setFocus(true);
             }
         });
 
-        // Add a handler to send the name to the server
-        MyHandler handler = new MyHandler();
-        sendButton.addClickHandler(handler);
-
         btnSubmit.addClickHandler(new SendPostHandler());
-
-        nameField.addKeyUpHandler(handler);
     }
 }
