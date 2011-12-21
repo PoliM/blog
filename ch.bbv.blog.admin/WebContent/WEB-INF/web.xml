@@ -337,18 +337,9 @@
 		<welcome-file>Gwt_jboss.html</welcome-file>
 	</welcome-file-list>
 	<servlet>
-		<servlet-name>greetServlet</servlet-name>
-		<servlet-class>ch.bbv.blog.server.GreetingServiceImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>blogServlet</servlet-name>
 		<servlet-class>ch.bbv.blog.server.BlogServiceImpl</servlet-class>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>greetServlet</servlet-name>
-		<url-pattern>/gwttests/greet</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>blogServlet</servlet-name>
 		<url-pattern>/gwttests/blog</url-pattern>
