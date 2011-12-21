@@ -19,6 +19,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class BlogServiceImpl extends RemoteServiceServlet implements BlogService {
 
     private final Map<String, List<String>> userToEntries = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> acceptedEntries = new HashMap<String, List<String>>();
 
     @EJB
     private BlogAdminService blogAdminService;
@@ -53,6 +54,14 @@ public class BlogServiceImpl extends RemoteServiceServlet implements BlogService
     public boolean accept(String user, String text, String reviewerName) {
         System.out.println("Accepted" + text);
         boolean remove = userToEntries.get(user).remove(text);
+        if (remove) {
+            List<String> list = acceptedEntries.get(user);
+            if (null == list) {
+                list = new ArrayList<String>();
+                acceptedEntries.put(user, list);
+            }
+            list.add(text);
+        }
         if (userToEntries.get(user).isEmpty()) {
             userToEntries.remove(user);
         }
@@ -67,5 +76,14 @@ public class BlogServiceImpl extends RemoteServiceServlet implements BlogService
             userToEntries.remove(user);
         }
         return remove;
+    }
+
+    @Override
+    public Collection<String> getAllEntries() {
+        List<String> entries = new ArrayList<String>();
+        for (List<String> val : acceptedEntries.values()) {
+            entries.addAll(val);
+        }
+        return entries;
     }
 }

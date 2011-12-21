@@ -18,4 +18,6 @@ public interface BlogService extends RemoteService {
 
     boolean deny(String value, String text, String text2);
 
+    Collection<String> getAllEntries();
+
 }

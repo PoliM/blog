@@ -230,6 +230,30 @@ public class GwtTests implements EntryPoint {
         });
 
         RootPanel.get("tabs").add(tabPanel);
+
+        final ListBox allEntriesList = new ListBox();
+        tabPanel.add(allEntriesList, "Show entries", false);
+        allEntriesList.setSize("559px", "182px");
+        allEntriesList.setVisibleItemCount(5);
+        allEntriesList.addFocusHandler(new FocusHandler() {
+            @Override
+            public void onFocus(FocusEvent arg0) {
+                blogService.getAllEntries(new AsyncCallback<Collection<String>>() {
+                    @Override
+                    public void onFailure(Throwable arg0) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(Collection<String> entries) {
+                        allEntriesList.clear();
+                        for (String entry : entries) {
+                            allEntriesList.addItem(entry);
+                        }
+                    }
+                });
+            }
+        });
         RootPanel.get("errorLabelContainer").add(errorLabel);
 
         class SendPostHandler implements ClickHandler, KeyUpHandler {
