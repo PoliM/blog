@@ -17,6 +17,8 @@ public interface BlogAdminService {
 
 	Set<BlogTask> getBlogTasks();
 
+	BlogEntry getBlogForTask(UUID blogTaskId);
+	
 	void accept(UUID blogTaskId);
 
 	void reviewedOk(UUID blogTaskId);

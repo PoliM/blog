@@ -27,6 +27,7 @@ public class BlogTask {
 		return workItemId;
 	}
 	
+	
 	public State getState() {
 		return state;
 	}
@@ -37,5 +38,9 @@ public class BlogTask {
 
 	public UUID getId() {
 		return id;
+	}
+
+	public UUID getBlogEntryId() {
+		return blogEntryId;
 	}
 }

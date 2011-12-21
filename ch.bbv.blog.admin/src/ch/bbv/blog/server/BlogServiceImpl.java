@@ -1,10 +1,8 @@
 package ch.bbv.blog.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 
@@ -16,74 +14,54 @@ import ch.bbv.blog.service.model.BlogTask;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
-public class BlogServiceImpl extends RemoteServiceServlet implements BlogService {
+public class BlogServiceImpl extends RemoteServiceServlet implements
+		BlogService {
 
-    private final Map<String, List<String>> userToEntries = new HashMap<String, List<String>>();
-    private final Map<String, List<String>> acceptedEntries = new HashMap<String, List<String>>();
+	@EJB
+	private BlogAdminService blogAdminService;
 
-    @EJB
-    private BlogAdminService blogAdminService;
-    
-    @Override
-    public String post(String username, String blogValue) {
-        List<String> entriesOfUser = userToEntries.get(username);
-        if (null == entriesOfUser) {
-            entriesOfUser = new ArrayList<String>();
-            userToEntries.put(username, entriesOfUser);
-        }
-        entriesOfUser.add(blogValue);
-        return "Entry Added";
-    }
+	@Override
+	public String post(String username, String blogValue) {
+		blogAdminService.create(new BlogEntry(username, blogValue));
+		return "Entry Added";
+	}
 
-    @Override
-    public Collection<String> getAllBlogsToReview() {
-        return new ArrayList<String>(userToEntries.keySet());
-    }
+	/**
+	 * @return liste der BlogTask.Id
+	 */
+	@Override
+	public Collection<String> getAllBlogsToReview() {
+		Collection<String> result = new LinkedList<String>();
+		for (BlogTask tasks : blogAdminService.getBlogTasks()) {
+			result.add(tasks.getId().toString());
+		}
+		return result;
+	}
 
-    @Override
-    public String getNextEntryForUser(String userName) {
-        List<String> list = userToEntries.get(userName);
-        if (!list.isEmpty()) {
-            return list.iterator().next();
-        } else {
-            return "";
-        }
-    }
+	@Override
+	public String getNextEntryForUser(String blogTaskId) {
+		BlogEntry blogForTask = blogAdminService.getBlogForTask(UUID.fromString(blogTaskId));
+		return blogForTask.getText();
+	}
 
-    @Override
-    public boolean accept(String user, String text, String reviewerName) {
-        System.out.println("Accepted" + text);
-        boolean remove = userToEntries.get(user).remove(text);
-        if (remove) {
-            List<String> list = acceptedEntries.get(user);
-            if (null == list) {
-                list = new ArrayList<String>();
-                acceptedEntries.put(user, list);
-            }
-            list.add(text);
-        }
-        if (userToEntries.get(user).isEmpty()) {
-            userToEntries.remove(user);
-        }
-        return remove;
-    }
+	@Override
+	public boolean accept(String user, String text, String reviewerName) {
+		blogAdminService.reviewedOk(UUID.fromString(user));
+		return true;
+	}
 
-    @Override
-    public boolean deny(String user, String text, String reviewerName) {
-        System.out.println("Denied" + text);
-        boolean remove = userToEntries.get(user).remove(text);
-        if (userToEntries.get(user).isEmpty()) {
-            userToEntries.remove(user);
-        }
-        return remove;
-    }
+	@Override
+	public boolean deny(String user, String text, String reviewerName) {
+		blogAdminService.reviewedFailed(UUID.fromString(user));
+		return true;
+	}
 
-    @Override
-    public Collection<String> getAllEntries() {
-        List<String> entries = new ArrayList<String>();
-        for (List<String> val : acceptedEntries.values()) {
-            entries.addAll(val);
-        }
-        return entries;
-    }
+	@Override
+	public Collection<String> getAllEntries() {
+		Collection<String> result = new LinkedList<String>();
+		for (BlogEntry entry : blogAdminService.getPublishedBlogEntries()) {
+			result.add(entry.getText());
+		}
+		return result;
+	}
 }

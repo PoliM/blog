@@ -74,6 +74,13 @@ public class BlogAdminServiceImpl implements BlogAdminService {
 		return result;
 	}
 
+
+	@Override
+	public BlogEntry getBlogForTask(UUID blogTaskId) {
+		BlogTask blogTask = blogTasks.get(blogTaskId);
+		return blogEntries.get(blogTask.getBlogEntryId());
+	}
+
 	@Override
 	public Set<BlogEntry> getPublishedBlogEntries() {
 		Set<BlogEntry> result = new HashSet<BlogEntry>();
@@ -93,6 +100,7 @@ public class BlogAdminServiceImpl implements BlogAdminService {
 	@Override
 	public void reviewedOk(UUID blogTaskId) {
 		BlogTask blogTask = blogTasks.get(blogTaskId);
+		blogTask.setState(BlogTask.State.Closed);
 		Map<String, Object> taskResult = new HashMap<String, Object>();
 		taskResult.put("rejected", Boolean.FALSE);
 		ksession.getWorkItemManager().completeWorkItem(
@@ -102,6 +110,7 @@ public class BlogAdminServiceImpl implements BlogAdminService {
 	@Override
 	public void reviewedFailed(UUID blogTaskId) {
 		BlogTask blogTask = blogTasks.get(blogTaskId);
+		blogTask.setState(BlogTask.State.Closed);
 		Map<String, Object> taskResult = new HashMap<String, Object>();
 		taskResult.put("rejected", Boolean.TRUE);
 		ksession.getWorkItemManager().completeWorkItem(
