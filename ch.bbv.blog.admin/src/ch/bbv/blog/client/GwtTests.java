@@ -63,17 +63,13 @@ public class GwtTests implements EntryPoint {
 
         final ListBox listBox = new ListBox();
         final TextArea reviewTextFiled = new TextArea();
-        final Button sendButton = new Button("Send");
         final Label errorLabel = new Label();
-
-        // We can add style names to widgets
-        sendButton.addStyleName("sendButton");
 
         // Add the nameField and sendButton to the RootPanel
         // Use RootPanel.get() to get the entire body element
         RootPanel rootPanel = RootPanel.get("nameFieldContainer");
 
-        TabPanel tabPanel = new TabPanel();
+        final TabPanel tabPanel = new TabPanel();
         rootPanel.add(tabPanel, 92, 219);
         tabPanel.setSize("573px", "231px");
 
@@ -291,8 +287,6 @@ public class GwtTests implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 dialogBox.hide();
-                sendButton.setEnabled(true);
-                sendButton.setFocus(true);
             }
         });
 
