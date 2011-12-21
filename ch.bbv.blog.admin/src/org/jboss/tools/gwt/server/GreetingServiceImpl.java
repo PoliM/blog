@@ -7,7 +7,7 @@ import javax.ejb.EJB;
 import org.jboss.tools.gwt.client.GreetingService;
 import org.jboss.tools.gwt.shared.FieldVerifier;
 
-import ch.bbv.blog.service.TestService;
+import ch.bbv.blog.service.BlogAdminService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -19,7 +19,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 		GreetingService {
 	
 	@EJB
-	private TestService testService;
+	private BlogAdminService testService;
 
 	public String greetServer(String input) throws IllegalArgumentException {
 		// Verify that the input is valid. 
@@ -39,7 +39,7 @@ public class GreetingServiceImpl extends RemoteServiceServlet implements
 
 			return "Hello, " + input + "!<br><br>I am running " + serverInfo
 					+ ".<br><br>It looks like you are using:<br>" + userAgent +
-					"<br>The server says: " + testService.sayHello();
+					"<br>The server says: " ;
 	}
 
 	/**
