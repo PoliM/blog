@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_blogIdItem" structureRef="Long" />
+  <itemDefinition id="_rejectedItem" structureRef="Boolean" />
+
+  <process processType="Private" isExecutable="true" id="ch.bbv.blog.review" name="Blog review workflow" tns:packageName="ch.bbv.blog" tns:version="1" >
+
+    <extensionElements>
+     <tns:import name="ch.bbv.blog.WorkflowServiceFactory" />
+    </extensionElements>
+    <!-- process variables -->
+    <property id="blogId" itemSubjectRef="_blogIdItem"/>
+    <property id="rejected" itemSubjectRef="_rejectedItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="Start" />
+    <endEvent id="_18" name="End" >
+        <terminateEventDefinition/>
+    </endEvent>
+    <endEvent id="_5" name="End" >
+        <terminateEventDefinition/>
+    </endEvent>
+    <scriptTask id="_8" name="Publish blog" >
+      <script>WorkflowServiceFactory.getWorkflowService().publishBlog(blogId);
+</script>
+    </scriptTask>
+    <userTask id="_11" name="Review blog entry" >
+      <ioSpecification>
+        <dataInput id="_11_blogIdInput" name="blogId" />
+        <dataInput id="_11_GroupIdInput" name="GroupId" />
+        <dataOutput id="_11_rejectedOutput" name="rejected" />
+        <inputSet>
+          <dataInputRefs>_11_blogIdInput</dataInputRefs>
+          <dataInputRefs>_11_GroupIdInput</dataInputRefs>
+        </inputSet>
+        <outputSet>
+          <dataOutputRefs>_11_rejectedOutput</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>blogId</sourceRef>
+        <targetRef>_11_blogIdInput</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_11_GroupIdInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">BlogReviewer</from>
+          <to xsi:type="tFormalExpression">_11_GroupIdInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_11_rejectedOutput</sourceRef>
+        <targetRef>rejected</targetRef>
+      </dataOutputAssociation>
+    </userTask>
+    <exclusiveGateway id="_12" name="Gateway" gatewayDirection="Diverging" />
+    <scriptTask id="_14" name="Reject blog" >
+      <script>WorkflowServiceFactory.getWorkflowService().rejectBlog(blogId);
+</script>
+    </scriptTask>
+
+    <!-- connections -->
+    <sequenceFlow id="_14-_18" sourceRef="_14" targetRef="_18" />
+    <sequenceFlow id="_8-_5" sourceRef="_8" targetRef="_5" />
+    <sequenceFlow id="_12-_8" sourceRef="_12" targetRef="_8" name="ok" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" >return rejected==false;</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_1-_11" sourceRef="_1" targetRef="_11" />
+    <sequenceFlow id="_11-_12" sourceRef="_11" targetRef="_12" />
+    <sequenceFlow id="_12-_14" sourceRef="_12" targetRef="_14" name="bad" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" >return rejected==true;</conditionExpression>
+    </sequenceFlow>
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="ch.bbv.blog.review" >
+      <bpmndi:BPMNShape bpmnElement="_1" >
+        <dc:Bounds x="216" y="63" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_18" >
+        <dc:Bounds x="87" y="427" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5" >
+        <dc:Bounds x="349" y="430" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_8" >
+        <dc:Bounds x="307" y="324" width="118" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_11" >
+        <dc:Bounds x="147" y="150" width="184" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_12" >
+        <dc:Bounds x="214" y="254" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_14" >
+        <dc:Bounds x="38" y="324" width="149" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_14-_18" >
+        <di:waypoint x="112" y="348" />
+        <di:waypoint x="111" y="451" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_8-_5" >
+        <di:waypoint x="366" y="348" />
+        <di:waypoint x="373" y="454" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_12-_8" >
+        <di:waypoint x="238" y="278" />
+        <di:waypoint x="366" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_1-_11" >
+        <di:waypoint x="240" y="87" />
+        <di:waypoint x="239" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_11-_12" >
+        <di:waypoint x="239" y="174" />
+        <di:waypoint x="238" y="278" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_12-_14" >
+        <di:waypoint x="238" y="278" />
+        <di:waypoint x="112" y="348" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
