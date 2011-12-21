@@ -1,0 +1,3 @@
+# Module gwt_jboss
+# RPC service class, partial path of RPC policy file
+ch.bbv.blog.client.BlogService, DDF9E3104A56D9996ADAD932385599B7.gwt.rpc

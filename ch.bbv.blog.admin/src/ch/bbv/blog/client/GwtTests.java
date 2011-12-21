@@ -73,18 +73,18 @@ public class GwtTests implements EntryPoint {
         rootPanel.add(tabPanel, 92, 219);
         tabPanel.setSize("573px", "231px");
 
-        Grid grid = new Grid(3, 2);
+        final Grid grid = new Grid(3, 2);
         tabPanel.add(grid, "New Entry", false);
         grid.setSize("5cm", "3cm");
 
-        Label lblUser = new Label("User");
+        final Label lblUser = new Label("User");
         grid.setWidget(0, 0, lblUser);
 
         final TextBox usernameTextBox = new TextBox();
         usernameTextBox.setName("userName");
         grid.setWidget(0, 1, usernameTextBox);
 
-        Label lblEntry = new Label("Entry");
+        final Label lblEntry = new Label("Entry");
         grid.setWidget(1, 0, lblEntry);
 
         final TextArea newEntryTextBox = new TextArea();
@@ -93,13 +93,13 @@ public class GwtTests implements EntryPoint {
         grid.setWidget(1, 1, newEntryTextBox);
         newEntryTextBox.setSize("497px", "121px");
 
-        Button btnCancel = new Button("Cancel");
+        final Button btnCancel = new Button("Cancel");
         grid.setWidget(2, 0, btnCancel);
 
-        Button btnSubmit = new Button("Submit");
+        final Button btnSubmit = new Button("Submit");
         grid.setWidget(2, 1, btnSubmit);
 
-        SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
+        final SplitLayoutPanel splitLayoutPanel = new SplitLayoutPanel();
         tabPanel.add(splitLayoutPanel, "Review", false);
         splitLayoutPanel.setSize("560px", "170px");
 

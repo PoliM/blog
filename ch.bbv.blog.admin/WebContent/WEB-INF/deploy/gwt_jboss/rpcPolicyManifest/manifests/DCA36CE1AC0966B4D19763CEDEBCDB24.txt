@@ -1,0 +1,2 @@
+serviceClass: ch.bbv.blog.client.BlogService
+path: DDF9E3104A56D9996ADAD932385599B7.gwt.rpc
